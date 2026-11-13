@@ -9,9 +9,10 @@ import { EASE, MOTION_OK, ScrollTrigger, SplitText, gsap, useGSAP } from "@/lib/
  * Sections stay Server Components and opt in with data attributes:
  *
  *   data-split            heading lines rise from a mask when scrolled into view
- *   data-rise             a group whose direct children rise in, staggered
+ *   data-rise             a group whose direct children rise and sharpen out of a blur, staggered
  *   data-parallax="12"    element drifts by ±N percent of its height while in view
  *   data-scrub-words      words go from grey to white as the block is scrolled
+ *   data-scrub-rise       direct children rise in one after another, tied to scroll
  *   data-grow             a line scales from 0 to 1 on the Y axis with scroll
  *   data-drift="-8"       element moves horizontally by N percent with scroll
  *   data-draw             SVG strokes inside draw themselves when in view
@@ -48,11 +49,13 @@ export function ScrollMotion({ children }: { children: React.ReactNode }) {
 
         q("[data-rise]").forEach((el) => {
           gsap.from(el.children, {
-            y: 28,
+            y: 12,
             autoAlpha: 0,
-            duration: 0.9,
+            filter: "blur(6px)",
+            duration: 0.7,
             ease: EASE,
-            stagger: 0.07,
+            stagger: { amount: 0.3 },
+            clearProps: "filter",
             scrollTrigger: { trigger: el, start: "top 85%", once: true },
           });
         });
@@ -98,6 +101,20 @@ export function ScrollMotion({ children }: { children: React.ReactNode }) {
               ease: "none",
               stagger: 0.5,
               scrollTrigger: { trigger: el, start: "top 80%", end: "bottom 45%", scrub: 0.4 },
+            },
+          );
+        });
+
+        q("[data-scrub-rise]").forEach((el) => {
+          gsap.fromTo(
+            el.children,
+            { y: 24, autoAlpha: 0.15 },
+            {
+              y: 0,
+              autoAlpha: 1,
+              ease: "none",
+              stagger: 0.3,
+              scrollTrigger: { trigger: el, start: "top 90%", end: "bottom 70%", scrub: 0.4 },
             },
           );
         });

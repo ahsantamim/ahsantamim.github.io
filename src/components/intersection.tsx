@@ -15,10 +15,17 @@ const CORE = { x: 300, y: 210.41 };
 const mono = { fontFamily: "var(--font-mono)", textTransform: "uppercase" as const };
 const thin = { vectorEffect: "non-scaling-stroke" as const };
 
+/** Seconds each circle holds the spotlight in the loop. */
+const FOCUS = 1.7;
+const RING_REST = 0.55;
+const LABEL_DIM = 0.35;
+
 /**
  * Engineering, product, and AI as overlapping circles, with the work in the
  * region all three share. On first view the circles draw in and slide
- * together, then the centre fills; a slow pulse runs only while on screen.
+ * together. Then a loop: the centre clears, each circle takes the spotlight
+ * in turn, and all three light up as the centre fills again. It runs only
+ * while on screen and the tab is visible.
  *
  * The markup alone is the finished drawing, for reduced motion and no JS.
  */
@@ -32,14 +39,54 @@ export function Intersection({ className = "" }: { className?: string }) {
 
       mm.add(MOTION_OK, () => {
         const q = gsap.utils.selector(root);
-        const pulse = gsap.timeline({ repeat: -1, repeatDelay: 0.8, paused: true });
-        pulse.fromTo(
-          q("[data-ripple]"),
-          { scale: 1, autoAlpha: 0.7, svgOrigin: `${CORE.x} ${CORE.y}` },
-          { scale: 4, autoAlpha: 0, duration: 2.4, ease: "expo.out" },
-        );
+        const sets = q("[data-set]");
+        const rings = q("[data-ring]");
+        const glows = q("[data-glow]");
+        const labels = q("[data-label]");
+        const core = q("[data-core]");
 
-        const intro = gsap.timeline({ paused: true, onComplete: () => onScreen && pulse.play() });
+        /* The core clip is drawn from the circles at rest, so it only shows while none of them is scaled. */
+        const loop = gsap.timeline({ repeat: -1, paused: true, defaults: { ease: "sine.inOut" } });
+        loop.to(core, { autoAlpha: 0, duration: 0.6 }, 0);
+        SETS.forEach((s, i) => {
+          const at = 0.4 + i * FOCUS;
+          loop
+            .to(sets[i], { scale: 1.05, svgOrigin: `${s.cx} ${s.cy}`, duration: 0.7, ease: "power3.inOut" }, at)
+            .to(glows[i], { autoAlpha: 1, duration: 0.7 }, at)
+            .to(rings[i], { opacity: 1, duration: 0.7 }, at)
+            .to(labels[i], { opacity: 1, duration: 0.5 }, at)
+            .to(labels.filter((_, j) => j !== i), { opacity: LABEL_DIM, duration: 0.5 }, at)
+            .to(sets[i], { scale: 1, duration: 0.7, ease: "power3.inOut" }, at + FOCUS - 0.5)
+            .to(glows[i], { autoAlpha: 0, duration: 0.7 }, at + FOCUS - 0.5)
+            .to(rings[i], { opacity: RING_REST, duration: 0.7 }, at + FOCUS - 0.5);
+        });
+        const meet = 0.4 + SETS.length * FOCUS;
+        loop
+          .to(labels, { opacity: 1, duration: 0.5 }, meet)
+          .to(rings, { opacity: 1, duration: 0.5, stagger: 0.08 }, meet)
+          .fromTo(
+            core,
+            { autoAlpha: 0, scale: 0.85, filter: "blur(6px)", svgOrigin: `${CORE.x} ${CORE.y}` },
+            { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.9, ease: "expo.out", immediateRender: false },
+            meet + 0.2,
+          )
+          .to(rings, { opacity: RING_REST, duration: 0.8 }, meet + 2.6)
+          .to({}, { duration: 0.8 }, meet + 2.6);
+
+        let onScreen = false;
+        let introDone = false;
+        const sync = () => {
+          if (introDone && onScreen && !document.hidden) loop.play();
+          else loop.pause();
+        };
+
+        const intro = gsap.timeline({
+          paused: true,
+          onComplete: () => {
+            introDone = true;
+            sync();
+          },
+        });
         q("[data-set]").forEach((set, i) => {
           const { dx, dy } = SETS[i];
           intro.fromTo(
@@ -57,15 +104,9 @@ export function Intersection({ className = "" }: { className?: string }) {
             { autoAlpha: 1, filter: "blur(0px)", duration: 0.6, stagger: 0.12, ease: "power2.out" },
             0.5,
           )
-          .fromTo(q("[data-core]"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6, ease: "power2.out" }, 1.1)
-          .fromTo(
-            q("[data-dot]"),
-            { scale: 0.5, autoAlpha: 0, svgOrigin: `${CORE.x} ${CORE.y}` },
-            { scale: 1, autoAlpha: 1, duration: 0.5, ease: "back.out(2.5)" },
-            1.3,
-          );
+          .fromTo(core, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6, ease: "power2.out" }, 1.1)
+          .to({}, { duration: 1.2 });
 
-        let onScreen = false;
         ScrollTrigger.create({
           trigger: root.current,
           start: "top 80%",
@@ -73,10 +114,12 @@ export function Intersection({ className = "" }: { className?: string }) {
           onToggle: (self) => {
             onScreen = self.isActive;
             if (onScreen) intro.play();
-            if (onScreen && intro.progress() === 1) pulse.play();
-            else pulse.pause();
+            sync();
           },
         });
+
+        document.addEventListener("visibilitychange", sync);
+        return () => document.removeEventListener("visibilitychange", sync);
       });
     },
     { scope: root },
@@ -108,7 +151,8 @@ export function Intersection({ className = "" }: { className?: string }) {
       {SETS.map((s) => (
         <g key={s.id} data-set>
           <circle cx={s.cx} cy={s.cy} r={R} fill="currentColor" fillOpacity="0.035" stroke="none" />
-          <circle data-ring cx={s.cx} cy={s.cy} r={R} strokeOpacity="0.55" {...thin} />
+          <circle data-glow cx={s.cx} cy={s.cy} r={R} className="fill-motion" fillOpacity="0.1" stroke="none" opacity="0" />
+          <circle data-ring cx={s.cx} cy={s.cy} r={R} opacity={RING_REST} {...thin} />
           <text
             data-label
             x={s.lx}
@@ -135,12 +179,6 @@ export function Intersection({ className = "" }: { className?: string }) {
           fillOpacity="0.22"
           stroke="none"
         />
-      </g>
-
-      <circle data-ripple cx={CORE.x} cy={CORE.y} r={6} className="stroke-motion" opacity="0" {...thin} />
-      <g data-dot>
-        <circle cx={CORE.x} cy={CORE.y} r={9} className="fill-motion" fillOpacity="0.25" stroke="none" />
-        <circle cx={CORE.x} cy={CORE.y} r={3.5} className="fill-motion" stroke="none" />
       </g>
     </svg>
   );

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, Download } from "lucide-react";
+import { CONTACT_EVENT } from "@/components/contact/contact-trigger";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { nav, site } from "@/data/site";
 
@@ -18,6 +19,12 @@ export function Nav() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const close = () => setOpen(false);
+    window.addEventListener(CONTACT_EVENT, close);
+    return () => window.removeEventListener(CONTACT_EVENT, close);
   }, []);
 
   // Lock scroll and close on Escape while the mobile menu is open.
@@ -83,12 +90,6 @@ export function Nav() {
         </nav>
 
         <div className="flex items-center gap-5">
-          {site.availability.show && (
-            <span className="hidden items-center gap-2.5 text-[0.8125rem] text-muted xl:flex">
-              <span className="pulse-dot" aria-hidden="true" />
-              {site.availability.short}
-            </span>
-          )}
           <a
             href={site.resume}
             download
@@ -161,12 +162,6 @@ export function Nav() {
           </ul>
         </nav>
         <div className="wrap flex flex-col gap-5 pt-10 pb-8">
-          {site.availability.show && (
-            <p className="flex items-center gap-3 text-sm text-muted">
-              <span className="pulse-dot" aria-hidden="true" />
-              {site.availability.label}
-            </p>
-          )}
           <div className="grid grid-cols-2 gap-3">
             <a href={site.resume} download className="btn btn-outline">
               <span>Resume</span>

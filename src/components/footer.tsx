@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 import { ArrowUp } from "lucide-react";
-import { site } from "@/data/site";
+import { site, whatsapp } from "@/data/site";
 import { Year } from "@/components/year";
 
 const links = [
   { label: "Email", href: `mailto:${site.email}` },
+  { label: "WhatsApp", href: whatsapp() },
   { label: "LinkedIn", href: site.linkedin },
   { label: "GitHub", href: site.github },
   { label: "Resume", href: site.resume, download: true },

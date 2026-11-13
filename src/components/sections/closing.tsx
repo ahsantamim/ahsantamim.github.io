@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { ArticleRow } from "@/components/article-row";
 import { Button } from "@/components/button";
 import { articles } from "@/data/articles";
-import { mailto, site } from "@/data/site";
+import { site, whatsapp } from "@/data/site";
 
 export function Insights() {
   return (
@@ -42,6 +42,7 @@ export function Insights() {
 export function Contact() {
   const contacts = [
     { label: "Email", value: site.email, href: `mailto:${site.email}` },
+    { label: "WhatsApp", value: site.whatsapp.display, href: whatsapp() },
     { label: "LinkedIn", value: site.linkedin.replace(/^https?:\/\/(www\.)?/, ""), href: site.linkedin },
     { label: "GitHub", value: site.github.replace(/^https?:\/\/(www\.)?/, ""), href: site.github },
   ];
@@ -86,11 +87,11 @@ export function Contact() {
               looking for an engineering partner, I&rsquo;d love to hear about it.
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Button href={mailto("Project enquiry")} variant="solid" className="w-full sm:w-auto">
+              <Button href="/#contact" variant="solid" className="w-full sm:w-auto">
                 Start a Project
               </Button>
-              <Button href={`mailto:${site.email}`} icon="diagonal" className="w-full sm:w-auto">
-                Get in Touch
+              <Button href={whatsapp()} icon="diagonal" className="w-full sm:w-auto">
+                Chat on WhatsApp
               </Button>
             </div>
           </div>

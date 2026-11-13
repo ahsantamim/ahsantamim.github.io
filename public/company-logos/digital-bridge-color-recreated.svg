@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="970" height="320" viewBox="0 0 970 320">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3FB950"/><stop offset="0.55" stop-color="#2EA8C9"/><stop offset="1" stop-color="#79C0FF"/>
+    </linearGradient>
+  </defs>
+  <rect x="10" y="10" width="300" height="300" rx="72" fill="url(#g)"/>
+  <!-- bridge mark: deck, arch, pillars -->
+  <path d="M62 196 Q160 70 258 196" fill="none" stroke="#FFFFFF" stroke-width="22" stroke-linecap="round"/>
+  <rect x="52" y="190" width="216" height="22" rx="11" fill="#FFFFFF"/>
+  <rect x="98" y="150" width="20" height="104" rx="10" fill="#FFFFFF"/>
+  <rect x="202" y="150" width="20" height="104" rx="10" fill="#FFFFFF"/>
+  <circle cx="160" cy="114" r="14" fill="#FFFFFF"/>
+  <text x="372" y="152" font-family="JetBrains Mono" font-weight="800" font-size="118" letter-spacing="14" fill="#0D1117">DIGITAL</text>
+  <text x="372" y="282" font-family="JetBrains Mono" font-weight="800" font-size="118" letter-spacing="14" fill="url(#g)">BRIDGE</text>
+</svg>

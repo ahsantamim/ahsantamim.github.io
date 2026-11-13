@@ -301,10 +301,6 @@ body {
     transform-box: fill-box;
   }
 
-  .pulse-dot::after {
-    animation: pulse-ring 2.4s var(--ease-out-expo) infinite;
-  }
-
   .enter-blur {
     animation: enter-blur 1.2s var(--ease-out-expo) both;
     animation-delay: calc(var(--i, 0) * 90ms + 80ms);
@@ -371,37 +367,6 @@ body {
   }
 }
 
-@keyframes pulse-ring {
-  from {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  to {
-    transform: scale(3.2);
-    opacity: 0;
-  }
-}
-
-/* Availability dot. */
-.pulse-dot {
-  position: relative;
-  display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 9999px;
-  background: var(--color-ink);
-  flex: none;
-}
-
-.pulse-dot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid var(--color-ink);
-  opacity: 0;
-}
-
 /* ───────────────────────── Inverting rows ───────────────────────── */
 
 .row-invert {
@@ -419,6 +384,37 @@ body {
   transform: scaleY(0);
   transform-origin: bottom;
   transition: transform 0.5s var(--ease-out-expo);
+}
+
+/* A grid cell inverts inside its own hairlines. */
+.row-invert.cell::before {
+  inset: 0;
+}
+
+/*
+ * A one-colour company mark (a dark square with its symbol cut out) shows
+ * white on the dark theme. In an inverted row it stays white in both themes:
+ * a light fill behind the cut-out inverts to dark, so the symbol still reads.
+ */
+.logo-mono {
+  filter: invert(1);
+  transition:
+    filter 0.4s var(--ease-out-expo),
+    background-color 0.4s var(--ease-out-expo);
+}
+
+:root[data-theme="light"] .logo-mono {
+  filter: none;
+}
+
+@media (hover: hover) {
+  .row-invert:hover .logo-mono,
+  .row-invert:focus-visible .logo-mono,
+  :root[data-theme="light"] .row-invert:hover .logo-mono,
+  :root[data-theme="light"] .row-invert:focus-visible .logo-mono {
+    filter: invert(1);
+    background-color: #ededed;
+  }
 }
 
 .row-invert .row-muted {
@@ -516,6 +512,26 @@ body {
   }
 }
 
+/* Tool logos keep their brand colours; the rest of a row steps back on hover. */
+.tool-logo {
+  transition: opacity 0.4s var(--ease-out-expo);
+}
+
+/* Black marks turn white on the dark theme. */
+.tool-ink {
+  filter: brightness(0) invert(1);
+}
+
+:root[data-theme="light"] .tool-ink {
+  filter: none;
+}
+
+@media (hover: hover) {
+  .arsenal-list:has(li:hover) li:not(:hover) .tool-logo {
+    opacity: 0.4;
+  }
+}
+
 /* ───────────────────────── Overlay dialog ───────────────────────── */
 
 dialog.reader {
@@ -568,6 +584,119 @@ dialog.reader::backdrop {
   }
   to {
     opacity: 1;
+  }
+}
+
+/* ───────────────────────── Contact modal ───────────────────────── */
+
+dialog.contact {
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  overscroll-behavior: contain;
+}
+
+@media (min-width: 64rem) {
+  dialog.contact {
+    width: min(76rem, calc(100vw - 4rem));
+    height: min(52rem, calc(100dvh - 4rem));
+    margin: auto;
+    border: 1px solid var(--color-line);
+  }
+}
+
+dialog.contact::backdrop {
+  background: var(--backdrop);
+  backdrop-filter: blur(6px);
+}
+
+.contact-input {
+  display: block;
+  width: 100%;
+  padding: 0.65rem 0;
+  font-size: 1.0625rem;
+  background: transparent;
+  border-bottom: 1px solid var(--color-line);
+  border-radius: 0;
+  transition: border-color 0.3s var(--ease-out-expo);
+}
+
+.contact-input::placeholder {
+  color: var(--color-faint);
+}
+
+.contact-input:hover {
+  border-color: var(--color-faint);
+}
+
+.contact-input:focus-visible {
+  outline: none;
+  border-color: var(--color-ink);
+}
+
+/* Faint measuring grid over the orb, fading out toward the edges. */
+.contact-grid {
+  background-image:
+    linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+  opacity: 0.35;
+  mask-image: radial-gradient(ellipse at center, #000 10%, transparent 70%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  dialog.contact[open] {
+    animation: contact-in 0.7s var(--ease-out-expo);
+  }
+  dialog.contact[open]::backdrop {
+    animation: backdrop-in 0.4s ease;
+  }
+  dialog.contact[data-closing] {
+    animation: contact-out 0.26s ease-in forwards;
+  }
+  dialog.contact[data-closing]::backdrop {
+    animation: backdrop-in 0.26s ease-in reverse forwards;
+  }
+
+  /* Closed dialogs are display: none, so this replays on every open. */
+  dialog.contact .contact-stagger > * {
+    animation: enter-fade 0.9s var(--ease-out-expo) both;
+  }
+  dialog.contact .contact-stagger > :nth-child(2) {
+    animation-delay: 70ms;
+  }
+  dialog.contact .contact-stagger > :nth-child(3) {
+    animation-delay: 140ms;
+  }
+  dialog.contact .contact-stagger > :nth-child(4) {
+    animation-delay: 210ms;
+  }
+  dialog.contact .contact-stagger > :nth-child(n + 5) {
+    animation-delay: 280ms;
+  }
+}
+
+@keyframes contact-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes contact-out {
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
   }
 }
 

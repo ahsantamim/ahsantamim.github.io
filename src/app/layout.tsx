@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bodoni_Moda, Geist, Geist_Mono } from "next/font/google";
+import { ContactModal } from "@/components/contact/contact-modal";
 import { Cursor } from "@/components/motion/cursor";
 import { Nav } from "@/components/nav";
 import { site } from "@/data/site";
@@ -115,6 +116,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-svh">
         <Nav />
         {children}
+        <ContactModal />
         <Cursor />
         <script
           type="application/ld+json"
