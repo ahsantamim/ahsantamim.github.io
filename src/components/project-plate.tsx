@@ -1,5 +1,11 @@
 import type { Diagram } from "@/data/projects";
 import { LiveSvg } from "@/components/live-svg";
+import { TENANT_X } from "@/components/plates/tenants-geometry";
+import { TenantsStory } from "@/components/plates/tenants-story";
+import { D, Label, S } from "@/components/plates/parts";
+import { Settlement } from "@/components/plates/settlement";
+import { Search } from "@/components/plates/search";
+import { Hiring } from "@/components/plates/hiring";
 
 /**
  * Project "plates": schematic line drawings of each project's architecture or
@@ -8,44 +14,10 @@ import { LiveSvg } from "@/components/live-svg";
  * so they describe the real shape of the system and invent nothing.
  *
  * Strokes carry `data-stroke` (drawn on scroll), labels carry `data-fade`.
- * Each drawing ends with a live layer (packets, flowing dashes, spinners)
- * that fades in after the draw and loops only while the plate is on screen.
+ * Each drawing ends with a live layer that loops only while the plate is on
+ * screen: a scripted story in the hero's style (tenants, settlement, search,
+ * hiring), or ambient packets, flowing dashes and spinners (the rest).
  */
-
-const S = { "data-stroke": true, vectorEffect: "non-scaling-stroke" as const };
-/** Dashed shapes fade in: drawing a stroke would replace its dash pattern. */
-const D = { "data-fade": true, vectorEffect: "non-scaling-stroke" as const };
-
-function Label({
-  x,
-  y,
-  children,
-  anchor = "middle",
-  dim = false,
-}: {
-  x: number;
-  y: number;
-  children: string;
-  anchor?: "start" | "middle" | "end";
-  dim?: boolean;
-}) {
-  return (
-    <text
-      data-fade
-      x={x}
-      y={y}
-      textAnchor={anchor}
-      fill="currentColor"
-      className={dim ? "fill-muted" : undefined}
-      stroke="none"
-      fontSize="13"
-      letterSpacing="1.2"
-      style={{ fontFamily: "var(--font-mono)", textTransform: "uppercase" }}
-    >
-      {children}
-    </text>
-  );
-}
 
 /* ───────────── Live layer pieces ───────────── */
 
@@ -126,8 +98,7 @@ function Ripple({ cx, cy, delay = 0 }: { cx: number; cy: number; delay?: number 
 /* ───────────── Drawings ───────────── */
 
 function Tenants() {
-  const tenants = [120, 260, 400, 540, 680];
-  const inbound = (x: number) => `M${x} 104 V150 Q${x} 176 ${x < 400 ? x + 26 : x > 400 ? x - 26 : x} 176 H400 V212`;
+  const tenants = TENANT_X;
   return (
     <>
       {tenants.map((x, i) => (
@@ -154,16 +125,7 @@ function Tenants() {
       ))}
       <Label x={400} y={480} dim>Isolated data per tenant</Label>
 
-      <Live>
-        {tenants.map((x, i) => (
-          <Packet key={`in-${x}`} d={inbound(x)} dur={2.6} delay={i * 0.52} />
-        ))}
-        {tenants.map((x, i) => (
-          <Packet key={`out-${x}`} d={`M400 288 V400 H${x} V434`} dur={2.4} delay={1.2 + i * 0.48} />
-        ))}
-        <Spinner cx={548} cy={250} r={11} dash="3 5" />
-        <Spinner cx={548} cy={250} r={5} dash="2 3" reverse dur={9} opacity={0.5} />
-      </Live>
+      <TenantsStory />
     </>
   );
 }
@@ -330,6 +292,9 @@ function Stack() {
 
 const diagrams: Record<Diagram, () => React.ReactNode> = {
   tenants: Tenants,
+  settlement: Settlement,
+  search: Search,
+  hiring: Hiring,
   ledger: Ledger,
   pipeline: Pipeline,
   stack: Stack,
@@ -337,6 +302,12 @@ const diagrams: Record<Diagram, () => React.ReactNode> = {
 
 const titles: Record<Diagram, string> = {
   tenants: "Diagram: several tenants share one application, with data isolated per tenant.",
+  settlement:
+    "Diagram: a buyer orders on deferred terms, operations approve it, the supplier is paid upfront, and the buyer repays on a schedule until NSBH settles it.",
+  search:
+    "Diagram: articles published in the CMS land in PostgreSQL and sync to Elasticsearch, where readers search across the full archive.",
+  hiring:
+    "Diagram: candidates pass AI screening, an automated MCQ test and an AI interview before joining the shortlist, with Redis caching the API.",
   ledger: "Diagram: a transaction moves from financing to an installment schedule, payments, and reconciliation.",
   pipeline: "Diagram: an AI agent drafts and executes test cases, with a person reviewing before and after.",
   stack: "Diagram: a Django application in a Docker container on AWS, connected to PostgreSQL.",
@@ -345,15 +316,18 @@ const titles: Record<Diagram, string> = {
 export function ProjectPlate({
   diagram,
   parallax = true,
+  bare = false,
   className = "",
 }: {
   diagram: Diagram;
   parallax?: boolean;
+  /** No frame, ground or fixed ratio: the drawing fills a cell that already draws the lines. */
+  bare?: boolean;
   className?: string;
 }) {
   const Drawing = diagrams[diagram];
   return (
-    <div className={`plate aspect-[8/5] ${className}`}>
+    <div className={`${bare ? "relative overflow-hidden" : "plate aspect-[8/5]"} ${className}`}>
       <div className="plate-inner absolute inset-0">
         <div className="absolute inset-[5%]" data-parallax={parallax ? "4" : undefined}>
           <LiveSvg
@@ -364,7 +338,6 @@ export function ProjectPlate({
             fill="none"
             stroke="currentColor"
             strokeWidth="1"
-            data-draw
           >
             <Drawing />
           </LiveSvg>

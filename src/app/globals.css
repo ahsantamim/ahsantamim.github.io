@@ -483,6 +483,56 @@ body {
   }
 }
 
+/* ───────────────────────── Bento cells (selected work) ───────────────────────── */
+
+/* The cell is the frame: hover lifts its ground, draws the title, zooms the plate (above) and brings the arrow in. */
+.bento-cell {
+  transition: background-color 0.4s var(--ease-out-expo);
+}
+
+.bento-arrow {
+  opacity: 0;
+  transform: translate(-8px, 8px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.5s var(--ease-out-expo);
+}
+
+@media (hover: hover) {
+  .bento-cell:hover {
+    background-color: var(--color-surface);
+  }
+  .bento-cell:hover .link-draw,
+  .bento-cell:focus-visible .link-draw {
+    background-size: 100% 1px;
+  }
+  .bento-cell:hover .bento-arrow,
+  .bento-cell:focus-visible .bento-arrow {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* In the one-screen bento a side tile's height is fixed by the screen; its summary steps out when it no longer fits. */
+@media (width >= 80rem) {
+  .bento-text {
+    container-type: size;
+  }
+}
+
+@container (max-height: 8.75rem) {
+  .bento-summary {
+    display: none;
+  }
+}
+
+@media (hover: none) {
+  .bento-arrow {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* ───────────────────────── Plate live layer ───────────────────────── */
 
 .plate-live [data-march],
