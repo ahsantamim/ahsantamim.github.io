@@ -19,6 +19,11 @@ const flag = (el: Element, key: string) => el.hasAttribute(`data-${key}`);
  *
  * data-dur and data-delay tune any of them. Everything plays only while the
  * SVG is on screen, and nothing is built for reduced-motion visitors.
+ *
+ * The drawing itself draws in on first view: `data-stroke` strokes trace,
+ * then `data-fade` labels appear. It runs here rather than in the page's
+ * scroll controller because a plate can sit in a Suspense boundary that
+ * hydrates after the page, and must not be touched before it does.
  */
 export function LiveSvg({ className = "", children, ...props }: React.SVGProps<SVGSVGElement>) {
   const svg = useRef<SVGSVGElement>(null);
@@ -32,6 +37,11 @@ export function LiveSvg({ className = "", children, ...props }: React.SVGProps<S
         if (!root) return;
         const q = gsap.utils.selector(root);
         const loops: gsap.core.Animation[] = [];
+        gsap
+          .timeline({ scrollTrigger: { trigger: root, start: "top 80%", once: true } })
+          .from(q("[data-stroke]"), { drawSVG: "0%", duration: 1.4, ease: "power3.inOut", stagger: 0.035 })
+          .from(q("[data-fade]"), { autoAlpha: 0, duration: 0.6, stagger: 0.03 }, 0.5);
+
         const loop = (animation: gsap.core.Animation, delay = 0) => {
           animation.pause();
           if (delay) animation.totalTime(delay);

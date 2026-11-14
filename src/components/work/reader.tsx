@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { DraftTag, articleMeta } from "@/components/article-row";
 import { ProjectPlate } from "@/components/project-plate";
 import { articles, getArticle, type Article } from "@/data/articles";
-import { getProject, projects, type Project } from "@/data/projects";
+import { featured, getProject, projects, type Project } from "@/data/projects";
 
 /**
  * Reading overlay for case studies (`?case=slug`) and articles (`?note=slug`).
@@ -24,6 +24,8 @@ export function Reader() {
   const project = caseSlug ? getProject(caseSlug) : undefined;
   const article = !project && noteSlug ? getArticle(noteSlug) : undefined;
   const openKey = project ? `case:${project.slug}` : article ? `note:${article.slug}` : null;
+  /** Homepage-only case studies page through the homepage list. */
+  const list = project && !projects.includes(project) ? featured : projects;
 
   useEffect(() => {
     const el = dialog.current;
@@ -78,10 +80,10 @@ export function Reader() {
             {project && (
               <CaseStudy
                 project={project}
-                prevHref={hrefWith("case", neighbour(projects, project, -1).slug)}
-                nextHref={hrefWith("case", neighbour(projects, project, 1).slug)}
-                prevTitle={neighbour(projects, project, -1).title}
-                nextTitle={neighbour(projects, project, 1).title}
+                prevHref={hrefWith("case", neighbour(list, project, -1).slug)}
+                nextHref={hrefWith("case", neighbour(list, project, 1).slug)}
+                prevTitle={neighbour(list, project, -1).title}
+                nextTitle={neighbour(list, project, 1).title}
               />
             )}
             {article && (
@@ -141,7 +143,11 @@ function CaseStudy({
 }) {
   return (
     <article>
-      <p className="label text-muted">{project.status}</p>
+      <p className="label flex flex-wrap gap-x-4 gap-y-2 text-muted">
+        <span>{project.status}</span>
+        {project.company && <span className="text-ink">{project.company}</span>}
+        {project.period && <span>{project.period}</span>}
+      </p>
       <h2 id="reader-title" className="h2 mt-5 max-w-[16ch]">
         {project.title}
       </h2>
@@ -164,9 +170,11 @@ function CaseStudy({
 
       <ProjectPlate diagram={project.diagram} parallax={false} className="my-12" />
 
-      <Block title="Problem">
-        <p>{project.problem}</p>
-      </Block>
+      {project.problem && (
+        <Block title="Problem">
+          <p>{project.problem}</p>
+        </Block>
+      )}
       <Block title="Context">
         <p>{project.context}</p>
       </Block>
@@ -190,31 +198,35 @@ function CaseStudy({
           ))}
         </ol>
       </Block>
-      <Block title="Decisions">
-        <div className="space-y-7">
-          {project.decisions.map((decision) => (
-            <div key={decision.title}>
-              <h4 className="text-lg font-medium tracking-tight text-ink">{decision.title}</h4>
-              <p className="mt-2">{decision.body}</p>
-            </div>
-          ))}
-        </div>
-      </Block>
+      {project.decisions.length > 0 && (
+        <Block title="Decisions">
+          <div className="space-y-7">
+            {project.decisions.map((decision) => (
+              <div key={decision.title}>
+                <h4 className="text-lg font-medium tracking-tight text-ink">{decision.title}</h4>
+                <p className="mt-2">{decision.body}</p>
+              </div>
+            ))}
+          </div>
+        </Block>
+      )}
       {project.snippet && (
         <Block title="Code">
           <Code code={project.snippet.code} caption={project.snippet.caption} />
         </Block>
       )}
-      <Block title="Challenges">
-        <div className="space-y-7">
-          {project.challenges.map((challenge) => (
-            <div key={challenge.title}>
-              <h4 className="text-lg font-medium tracking-tight text-ink">{challenge.title}</h4>
-              <p className="mt-2">{challenge.body}</p>
-            </div>
-          ))}
-        </div>
-      </Block>
+      {project.challenges.length > 0 && (
+        <Block title="Challenges">
+          <div className="space-y-7">
+            {project.challenges.map((challenge) => (
+              <div key={challenge.title}>
+                <h4 className="text-lg font-medium tracking-tight text-ink">{challenge.title}</h4>
+                <p className="mt-2">{challenge.body}</p>
+              </div>
+            ))}
+          </div>
+        </Block>
+      )}
       <Block title="Outcomes">
         <p>{project.outcomes ?? "No figures are published for this project. I only list results I can verify and am free to share."}</p>
       </Block>
