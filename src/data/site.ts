@@ -1,3 +1,5 @@
+import { asset } from "@/lib/asset";
+
 /**
  * Site-wide identity and contact details.
  *
@@ -21,7 +23,7 @@ export const site = {
   },
   linkedin: "https://www.linkedin.com/in/ahsanul-karim-2258601b1/",
   github: "https://github.com/ahsantamim",
-  resume: "/Ahsanul_Karim_Resume.pdf",
+  resume: asset("/Ahsanul_Karim_Resume.pdf"),
   /** Meeting slots are offered in this zone. */
   timeZone: "Asia/Dhaka",
 } as const;

@@ -1,3 +1,5 @@
+import { asset } from "@/lib/asset";
+
 export const hero = {
   /** Cycles after "I'm", following the name. */
   roles: ["AI-Native Engineer", "Product Engineer", "Full-Stack Engineer"],
@@ -98,7 +100,7 @@ export const journey: JourneyEntry[] = [
   {
     position: "AI Native Software Engineer",
     company: "NSBH",
-    logo: "/company-logos/nsbh-mark.svg",
+    logo: asset("/company-logos/nsbh-mark.svg"),
     logoMono: true,
     monogram: "NS",
     location: "Saudi Arabia",
@@ -128,7 +130,7 @@ export const journey: JourneyEntry[] = [
   {
     position: "Software Engineer",
     company: "Gestioniza",
-    logo: "/company-logos/grupo-gestioniza-icon.png",
+    logo: asset("/company-logos/grupo-gestioniza-icon.png"),
     monogram: "GZ",
     location: "Spain",
     dates: "Jun 2025 — Jun 2026",
@@ -144,7 +146,7 @@ export const journey: JourneyEntry[] = [
   {
     position: "Software Engineer",
     company: "Binary Quest",
-    logo: "/company-logos/binary-quest-app-icon.png",
+    logo: asset("/company-logos/binary-quest-app-icon.png"),
     monogram: "BQ",
     location: "Bangladesh",
     dates: "Sep 2024 — Jun 2025",

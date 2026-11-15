@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { MOTION_OK, MOTION_REDUCED, gsap, useGSAP } from "@/lib/gsap";
+import { asset } from "@/lib/asset";
 
 /* Real tool logos in their own colours, fetched by the taste skill's icons.mjs into public/icons. */
 const TOOLS = {
@@ -309,7 +310,7 @@ function ToolTile({ tool }: { tool: Tool }) {
   return (
     <span data-cap-icon className="flex h-4 items-center justify-center">
       <Image
-        src={`/icons/${tool}.svg`}
+        src={asset(`/icons/${tool}.svg`)}
         alt=""
         width={TOOLS[tool].w}
         height={TOOLS[tool].h}

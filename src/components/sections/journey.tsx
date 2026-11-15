@@ -1,5 +1,5 @@
-import { cacheLife } from "next/cache";
 import Image from "next/image";
+import { asset } from "@/lib/asset";
 import {
   ArrowDown,
   ArrowLeftRight,
@@ -16,20 +16,13 @@ import { arsenal, arsenalIcons, journey } from "@/data/content";
 import { site } from "@/data/site";
 import { monthIndex } from "@/lib/tenure";
 
-/** The current month, refreshed daily, so "Present" tenures stay true without a request-time render. */
-async function currentMonth() {
-  "use cache";
-  cacheLife("days");
-  return monthIndex(new Date());
-}
-
 /**
  * The roles as cards, newest first, as the data is ordered: one row on
  * desktop, two on phones. Each card opens its full job description in a side
  * drawer.
  */
-export async function Journey() {
-  const now = await currentMonth();
+export function Journey() {
+  const now = monthIndex(new Date());
 
   return (
     <section className="py-[clamp(4.5rem,9vw,8rem)]" aria-labelledby="journey-title">
@@ -104,7 +97,7 @@ export function Arsenal() {
                       >
                         {logo ? (
                           <Image
-                            src={`/icons/${logo.icon}.svg`}
+                            src={asset(`/icons/${logo.icon}.svg`)}
                             alt=""
                             width={20}
                             height={20}
