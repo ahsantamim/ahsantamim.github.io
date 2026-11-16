@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ArticleRow } from "@/components/article-row";
 import { PageShell } from "@/components/page-shell";
+import { ContractWork } from "@/components/sections/contract-work";
 import { FilterBar, ProjectArchive } from "@/components/work/project-archive";
 import { ProjectList } from "@/components/work/project-list";
 import { Reader } from "@/components/work/reader";
@@ -58,6 +59,10 @@ export default function Work() {
           </Suspense>
         </div>
       </section>
+
+      <div id="independent" className="border-t border-line">
+        <ContractWork />
+      </div>
 
       <section id="insights" className="section-y border-t border-line" aria-labelledby="notes-title">
         <div className="wrap">
