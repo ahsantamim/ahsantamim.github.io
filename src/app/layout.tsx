@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bodoni_Moda, Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { ContactModal } from "@/components/contact/contact-modal";
 import { Cursor } from "@/components/motion/cursor";
 import { Nav } from "@/components/nav";
@@ -63,6 +64,9 @@ export const viewport: Viewport = {
   colorScheme: "dark light",
 };
 
+// Cloudflare Web Analytics. The token is public (it ships in the page anyway).
+const CF_ANALYTICS_TOKEN = "7356dc15d0a54100b59d851516b1dafe";
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -122,6 +126,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
         />
+        {process.env.NODE_ENV === "production" && (
+          <Script
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={JSON.stringify({ token: CF_ANALYTICS_TOKEN })}
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );
