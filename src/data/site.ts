@@ -24,6 +24,8 @@ export const site = {
   linkedin: "https://www.linkedin.com/in/ahsanul-karim-2258601b1/",
   github: "https://github.com/ahsantamim",
   resume: asset("/Ahsanul_Karim_Resume.pdf"),
+  /** The Cloudflare Worker behind /analytics (see analytics-worker/). */
+  analyticsApi: process.env.NEXT_PUBLIC_ANALYTICS_API ?? "",
   /** Meeting slots are offered in this zone. */
   timeZone: "Asia/Dhaka",
 } as const;

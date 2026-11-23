@@ -16,6 +16,7 @@ const eslintConfig = defineConfig([
     ".impeccable/**",
     ".taste-skill/**",
     "hero-cycle/**",
+    "analytics-worker/**",
   ]),
 ]);
 

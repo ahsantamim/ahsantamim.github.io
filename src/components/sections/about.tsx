@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { AnalyticsGate } from "@/components/analytics/analytics-gate";
 import { Intersection } from "@/components/intersection";
 import { philosophy } from "@/data/content";
 
@@ -22,15 +23,18 @@ export function About() {
           >
             {philosophy.statement}
           </p>
-          <Link href="/about" className="group mt-8 inline-flex min-h-11 items-center gap-2 text-muted hover:text-ink">
-            <span className="link-draw">More about me</span>
-            <ArrowRight
-              size={16}
-              strokeWidth={1.75}
-              aria-hidden="true"
-              className="transition-transform duration-300 ease-(--ease-out-expo) group-hover:translate-x-1"
-            />
-          </Link>
+          <div className="mt-8 flex flex-wrap gap-x-10 gap-y-2">
+            <Link href="/about" className="group inline-flex min-h-11 items-center gap-2 text-muted hover:text-ink">
+              <span className="link-draw">More about me</span>
+              <ArrowRight
+                size={16}
+                strokeWidth={1.75}
+                aria-hidden="true"
+                className="transition-transform duration-300 ease-(--ease-out-expo) group-hover:translate-x-1"
+              />
+            </Link>
+            <AnalyticsGate />
+          </div>
         </div>
 
         <Intersection className="w-full max-w-[38rem] lg:col-span-5 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:self-center" />

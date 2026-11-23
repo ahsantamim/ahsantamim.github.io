@@ -806,3 +806,28 @@ dialog.contact::backdrop {
 .split-line {
   will-change: transform;
 }
+
+/* ───────────────────────── Analytics password dialog ───────────────────────── */
+
+dialog.analytics-gate {
+  width: min(32rem, calc(100vw - 2rem));
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+dialog.analytics-gate::backdrop {
+  background: var(--backdrop);
+  backdrop-filter: blur(6px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  dialog.analytics-gate[open] {
+    animation: enter-fade 0.5s var(--ease-out-expo);
+  }
+  dialog.analytics-gate[open]::backdrop {
+    animation: backdrop-in 0.4s ease;
+  }
+}

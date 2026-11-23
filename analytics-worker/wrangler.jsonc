@@ -1,0 +1,16 @@
+{
+  // Read-only proxy between the portfolio's /analytics page and Cloudflare's
+  // GraphQL Analytics API. The API token lives only here, as a Worker secret:
+  //   npx wrangler secret put CF_API_TOKEN
+  "name": "portfolio-analytics",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "vars": {
+    // Not secret: the account and Web Analytics site this Worker reports on.
+    "CF_ACCOUNT_ID": "345fb3530db443ccd88a37aa9c7b4311",
+    "CF_SITE_TAG": "0a63c5718db34bb28e6ba072dff48dd9",
+    // Pages allowed to call this Worker from a browser (comma separated).
+    "ALLOWED_ORIGINS": "https://ahsantamim.github.io,http://localhost:3000"
+  }
+}
