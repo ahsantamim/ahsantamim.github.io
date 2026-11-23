@@ -25,7 +25,7 @@ export const site = {
   github: "https://github.com/ahsantamim",
   resume: asset("/Ahsanul_Karim_Resume.pdf"),
   /** The Cloudflare Worker behind /analytics (see analytics-worker/). */
-  analyticsApi: process.env.NEXT_PUBLIC_ANALYTICS_API ?? "",
+  analyticsApi: process.env.NEXT_PUBLIC_ANALYTICS_API ?? "https://portfolio-analytics.ahsantamim.workers.dev",
   /** Meeting slots are offered in this zone. */
   timeZone: "Asia/Dhaka",
 } as const;

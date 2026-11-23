@@ -6,6 +6,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-11-01",
   "workers_dev": true,
+  "preview_urls": false,
   "vars": {
     // Not secret: the account and Web Analytics site this Worker reports on.
     "CF_ACCOUNT_ID": "345fb3530db443ccd88a37aa9c7b4311",
