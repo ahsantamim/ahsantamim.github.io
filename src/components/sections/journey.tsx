@@ -25,7 +25,7 @@ export function Journey() {
   const now = monthIndex(new Date());
 
   return (
-    <section className="py-[clamp(4.5rem,9vw,8rem)]" aria-labelledby="journey-title">
+    <section id="experience" className="py-[clamp(4.5rem,9vw,8rem)]" aria-labelledby="journey-title">
       <div className="wrap">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <h2 id="journey-title" className="h2" data-split>

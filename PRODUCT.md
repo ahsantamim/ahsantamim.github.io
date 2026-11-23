@@ -23,7 +23,7 @@ A single engineer who covers the whole path from idea to production: frontend, b
 
 ## Operating Context
 
-Two primary pages only: `/` (homepage) and `/work` (projects, case studies, writing). Case studies and articles open as overlays on `/work`. About and Contact are homepage sections.
+Three pages: `/` (homepage), `/work` (projects, case studies, writing), and `/about` (story, motive, education; experience and projects stay on `/` and `/work`). Case studies and articles open as overlays on `/work`. Contact is a homepage section and a site-wide modal; the homepage keeps a short About section that links to `/about`.
 
 ## Capabilities and Constraints
 
